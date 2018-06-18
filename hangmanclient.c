@@ -20,6 +20,11 @@ int main(int argc, char* argv[])
     struct sockaddr_in serv_addr;
     char message[30];
     
+    if(argc!=3) {
+        printf("Usage : %s <IP> <port>\n", argv[0]);
+        exit(1);
+    }
+    
     //socket
     sock=socket(PF_INET, SOCK_STREAM, 0);
     if(sock == -1)
@@ -33,12 +38,13 @@ int main(int argc, char* argv[])
     //connect
     if(connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1)
         error_handling("connect() error!");
+    puts("Connecting success!!!");
     
     //write
     message[0] = 0;
     while(strcmp(message , "exit") != 0)
     {
-        printf("Enter a message : ");
+        //printf("Enter a message : ");
         fgets(message , sizeof(message) , stdin);
         write(sock, message, strlen(message));
     }
