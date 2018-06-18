@@ -14,7 +14,6 @@ int main(int argc, char* argv[])
     int sock;
     struct sockaddr_in serv_addr;
     char message[30];
-    pthread_t send_thread, recv_thread;
     
     if(argc!=3) {
         printf("Usage : %s <IP> <port>\n", argv[0]);
@@ -36,14 +35,8 @@ int main(int argc, char* argv[])
         error_handling("connect() error!");
     puts("Connecting success!!!");
     
-    
-    /write&read
-    pthread_create(&wrt_thread, NULL, wrt, (void *)&sock);
-    pthread_create(&read_thread, NULL, read, (void *)&sock);
-    
-    pthread_join(wrt_thread, &thread_return);
-    pthread_join(read_thread, &thread_return);
-    
+    //write
+    wrt((void *) &sock);
     //close
     close(sock);
     return 0;
@@ -65,14 +58,3 @@ void wrt(void * arg) {
         write(sock, input, BUF_SIZE);
     }
 }
-
-void read(void * arg) {
-    
-    int sock = *((int *)arg);
-    char input[BUF_SIZ];
-    while(1) {
-        read(sock, &message, BUF_SIZE-1);
-        printf("%s", message);
-    }
-}
-
