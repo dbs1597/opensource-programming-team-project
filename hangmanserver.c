@@ -27,10 +27,15 @@ int main(int argc, char *argv[])
     if(serv_sock == -1)
         error_handling("socket() error");
     
+    if(argc!=2) {
+        printf("Usage : %s <port>\n", argv[0]);
+        exit(1);
+    }
+    
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family=AF_INET;
     serv_addr.sin_addr.s_addr=htonl(INADDR_ANY);
-    serv_addr.sin_port=htons(PORT);
+    serv_addr.sin_port=htons(atoi(argv[1]));
     
     //bind
     if(bind(serv_sock, (struct sockaddr*) &serv_addr, sizeof(serv_addr))==-1)
