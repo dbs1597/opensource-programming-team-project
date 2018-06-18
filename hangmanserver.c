@@ -59,13 +59,13 @@ int main(int argc, char *argv[])
         
         usercount++;
         
-        if(uesrcount<=2){ // player 2명 받기
+        if(usercount<=2){ // player 2명 받기
             user[usercount-1]=clnt_sock;
             
             send(clnt_sock,"Welcome to HangmanGame!\n",strlen("Welcome to HangmanGame!\n"),0);
             
             if(usercount==1) //player 1
-                send(clnt_sock,"상대방이 접속하면 게임이 시작됩니다.\n");
+                send(clnt_sock,"상대방이 접속하면 게임이 시작됩니다.\n",strlen("상대방이 접속하면 게임이 시작됩니다.\n"),0);
             else if(usercount==2){ //player 2
                 send(clnt_sock,"잠시 후 게임이 시작됩니다.\n",strlen("잠시 후 게임이 시작됩니다.\n"),0);
             }
