@@ -9,7 +9,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#define IP_ADR "192.168.43.175"
+#define IP_ADR "192.168.0.26"
 #define PORT 9999
 
 void error_handling(char *message);
@@ -20,6 +20,7 @@ int main(int argc, char* argv[])
     struct sockaddr_in serv_addr;
     char message[30];
     
+    //socket
     sock=socket(PF_INET, SOCK_STREAM, 0);
     if(sock == -1)
         error_handling("socket() error");
@@ -29,9 +30,11 @@ int main(int argc, char* argv[])
     serv_addr.sin_addr.s_addr=inet_addr(IP_ADR);
     serv_addr.sin_port=htons(PORT);
     
+    //connect
     if(connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1)
         error_handling("connect() error!");
     
+    //write
     message[0] = 0;
     while(strcmp(message , "exit") != 0)
     {
@@ -39,6 +42,7 @@ int main(int argc, char* argv[])
         fgets(message , sizeof(message) , stdin);
         write(sock, message, strlen(message));
     }
+    //close
     close(sock);
     return 0;
 }

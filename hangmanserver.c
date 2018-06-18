@@ -22,8 +22,8 @@ int main(int argc, char *argv[])
     
     char message[MAXLEN]="Hello World!";
     
-    serv_sock=socket(PF_INET, SOCK_STREAM, 0);
-    printf("%d %d\n", PF_INET, SOCK_STREAM);
+    //socket
+    serv_sock=socket(PF_INET, SOCK_STREAM, IPPROTO_TCP); //양방향통신
     if(serv_sock == -1)
         error_handling("socket() error");
     
@@ -32,14 +32,17 @@ int main(int argc, char *argv[])
     serv_addr.sin_addr.s_addr=htonl(INADDR_ANY);
     serv_addr.sin_port=htons(PORT);
     
+    //bind
     if(bind(serv_sock, (struct sockaddr*) &serv_addr, sizeof(serv_addr))==-1)
         error_handling("bind() error");
     
+    //listen
     if(listen(serv_sock, 5)==-1)
         error_handling("listen() error");
     
     clnt_addr_size=sizeof(clnt_addr);
     
+    //read
     while(1)
     {
         puts("Server] Listening...");
@@ -69,6 +72,7 @@ int main(int argc, char *argv[])
         }
     }
     
+    //close
     close(clnt_sock);
     close(serv_sock);
     return 0;
