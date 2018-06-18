@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#define BUF_SIZE 50
 
 void error_handling(char *message);
 
@@ -35,13 +36,7 @@ int main(int argc, char* argv[])
     puts("Connecting success!!!");
     
     //write
-    message[0] = 0;
-    while(strcmp(message , "exit") != 0)
-    {
-        //printf("Enter a message : ");
-        fgets(message , sizeof(message) , stdin);
-        write(sock, message, strlen(message));
-    }
+    wrt((void *) &sock);
     //close
     close(sock);
     return 0;
@@ -52,4 +47,14 @@ void error_handling(char *message)
     fputs(message, stderr);
     fputc('\n', stderr);
     exit(1);
+}
+
+void wrt(void * arg) {
+    
+    int sock = *((int *)arg);
+    char input[BUF_SIZ];
+    while(strcmp("quit", input )== 0) {
+        fgets(input, BUF_SIZ, stdin);
+        write(sock, input, BUF_SIZE);
+    }
 }
