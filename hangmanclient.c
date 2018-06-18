@@ -5,9 +5,11 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+
 #define BUF_SIZE 50
 
 void error_handling(char *message);
+void wrt(void * arg);
 
 int main(int argc, char* argv[])
 {
@@ -52,9 +54,9 @@ void error_handling(char *message)
 void wrt(void * arg) {
     
     int sock = *((int *)arg);
-    char input[BUF_SIZ];
+    char input[BUF_SIZE];
     while(strcmp("quit", input )== 0) {
-        fgets(input, BUF_SIZ, stdin);
+        fgets(input, BUF_SIZE, stdin);
         write(sock, input, BUF_SIZE);
     }
 }
