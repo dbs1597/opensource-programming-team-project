@@ -52,7 +52,6 @@ void error_handling(char *message)
 void wrt(void * arg) {
     
     int sock = *((int *)arg);
-    int sock = *((int*)arg);
     char input[BUF_SIZ];
     while(strcmp("quit", input )== 0) {
         fgets(input, BUF_SIZ, stdin);
