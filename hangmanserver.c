@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
     char message[MAXLEN]="Hello World!";
     
     int usercount = 0;
-    int user[2] = {0};
+    int user[2] = {0}; //user 소켓
     
     //socket
     serv_sock=socket(PF_INET, SOCK_STREAM, IPPROTO_TCP); //양방향통신
@@ -64,15 +64,23 @@ int main(int argc, char *argv[])
             
             send(clnt_sock,"Welcome to HangmanGame!\n",strlen("Welcome to HangmanGame!\n"),0);
             
-            if(usercount==1) //player 1
+            if(usercount==1){ //player 1
+                send(clnt_sock,"you are player1\n",strlen("you are player1\n"),0);
                 send(clnt_sock,"상대방이 접속하면 게임이 시작됩니다.\n",strlen("상대방이 접속하면 게임이 시작됩니다.\n"),0);
+            }
             else if(usercount==2){ //player 2
+                send(clnt_sock,"you are player2\n",strlen("you are player2\n"),0);
                 send(clnt_sock,"잠시 후 게임이 시작됩니다.\n",strlen("잠시 후 게임이 시작됩니다.\n"),0);
             }
-            
         }
         else // player 2명 다 차면
             send(clnt_sock,"정원이 다 찼습니다.\n",strlen("정원이 다 찼습니다.\n"),0);
+        
+        //게임시작
+        send(user[0],"Game Start!\n",strlen("Game Start!\n"),0);
+        send(user[1],"Game Start!\n",strlen("Game Start!\n"),0);
+        
+        
         message[0] = 0;
         idx = 0;
         while(read_len=read(clnt_sock, &message[idx], 1))
