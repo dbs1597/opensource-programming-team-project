@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h> // time
 #include <unistd.h> // Sleep, 사용자 함수 kbhit 구현
-#include <termio.h> // 사용자 함수 getch 구현
+#include <termios.h> // 사용자 함수 getch 구현
 #include <termios.h> // 사용자 함수 kbhit 구현
 #include <fcntl.h> // 사용자 함수 kbhit 구현
 
