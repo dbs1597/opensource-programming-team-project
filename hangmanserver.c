@@ -6,8 +6,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#define PORT 9999
-
 #define MAXLEN 1024
 void error_handling(char *message);
 
