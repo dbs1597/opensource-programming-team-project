@@ -6,9 +6,6 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-#define IP_ADR "192.168.0.26"
-#define PORT 9999
-
 void error_handling(char *message);
 
 int main(int argc, char* argv[])
@@ -29,8 +26,8 @@ int main(int argc, char* argv[])
     
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family=AF_INET;
-    serv_addr.sin_addr.s_addr=inet_addr(IP_ADR);
-    serv_addr.sin_port=htons(PORT);
+    serv_addr.sin_addr.s_addr=inet_addr(argv[1]);
+    serv_addr.sin_port=htons(atoi(argv[2]));
     
     //connect
     if(connect(sock, (struct sockaddr*)&serv_addr, sizeof(serv_addr))==-1)
