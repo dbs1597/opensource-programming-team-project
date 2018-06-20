@@ -63,6 +63,7 @@ int main(int argc, char *argv[])
     {
         puts("Server] Listening...");
         clnt_sock=accept(serv_sock, (struct sockaddr*)&clnt_addr,&clnt_addr_size);
+        
         if(clnt_sock==-1)
             error_handling("accept() error");
         puts("Server] Accepted!!");
@@ -72,6 +73,7 @@ int main(int argc, char *argv[])
         
         message[0] = 0;
         idx = 0;
+        
         while(read(clnt_sock, &message[0], 1))
         {
             count++;
@@ -83,12 +85,17 @@ int main(int argc, char *argv[])
                 exit(1);
             }
             
-            if(strlen(message)==1) {
-                for(i=0;  i<strlen(word); i++){
-                    if(word[i]==message[0] && question[i] != message[0]){
+            if(strlen(message)==1)
+            {
+                for(i=0;  i<strlen(word); i++)
+                {
+                    if(word[i]==message[0] && question[i] != message[0])
+                    {
                         iscorrect++;
                         question[i]=word[i];
-                        if (iscorrect == strlen(word)) {
+                        
+                        if (iscorrect == strlen(word))
+                        {
                             send(clnt_sock, word, strlen(word), 0);
                             send(clnt_sock, "단어완성!\n", strlen("단어완성!\n"), 0);
                             close(clnt_sock);
@@ -118,17 +125,6 @@ int main(int argc, char *argv[])
                 send(clnt_sock, " 소문자 알파벳을 입력하세요.\n", strlen(" 소문자 알파벳을 입력하세요.\n"), 0);
                 last = iscorrect;
                 
-                
-                
-                //            if(message[idx++] == '\n'){
-                //                message[idx] = 0;
-                //
-                //                //-----------------------write code to do---------------------------------
-                //                printf("Message from Client: %s", message);
-                //                //------------------------------------------------------------------------
-                //                message[0] = 0 ;
-                //                idx = 0;
-                //            }
             }
         }
     }
@@ -145,6 +141,7 @@ void error_handling(char *message)
     exit(1);
 }
 
+// Hangman 그리는 함수
 char* drawHangman(int num){
     char* hangman={ 0 };
     switch (num)
