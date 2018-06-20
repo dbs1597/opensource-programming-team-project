@@ -16,14 +16,14 @@ int main(int argc, char *argv[])
     int serv_sock;
     int clnt_sock;
     int read_len , idx;
-    int i, j, iscorrect, chance, last;
+    int i, j, iscorrect, chance, last, count;
     struct sockaddr_in serv_addr;
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size;
     
     char word[MAXLEN], question[MAXLEN];
     
-    char message[MAXLEN];
+    char message[10];
     
     if(argc!=2) {
         printf("Usage : %s <port>\n", argv[0]);
@@ -57,6 +57,7 @@ int main(int argc, char *argv[])
     iscorrect = 0;
     chance = 0;
     last = 0;
+    count = 0;
     
     while(1)
     {
@@ -71,17 +72,18 @@ int main(int argc, char *argv[])
         
         message[0] = 0;
         idx = 0;
-        while(read(clnt_sock, &message[0], 1) == 1)
+        while(read(clnt_sock, &message[0], 1))
         {
+            count++;
+            if (count%2 == 0)
+                continue;
             
             if(read_len==-1){
                 error_handling("read() error!");
                 exit(1);
             }
-            printf("1 %d\n", strlen(message));
             
             if(strlen(message)==1) {
-                printf("2\n");
                 for(i=0;  i<strlen(word); i++){
                     if(word[i]==message[0] && question[i] != message[0]){
                         iscorrect++;
@@ -114,7 +116,6 @@ int main(int argc, char *argv[])
                 send(clnt_sock, "단어 ", strlen("단어 "), 0);
                 send(clnt_sock, question, strlen(question), 0);
                 send(clnt_sock, " 소문자 알파벳을 입력하세요.\n", strlen(" 소문자 알파벳을 입력하세요.\n"), 0);
-                message[0] = 0;
                 last = iscorrect;
                 
                 
@@ -130,8 +131,6 @@ int main(int argc, char *argv[])
                 //            }
             }
         }
-        
-        sleep(1);
     }
     
     close(clnt_sock);
@@ -180,4 +179,3 @@ char* drawHangman(int num){
     }
     return hangman;
 }
-
