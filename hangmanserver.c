@@ -56,6 +56,7 @@ int main(int argc, char *argv[])
     
     iscorrect = 0;
     chance = 0;
+    last = 0;
     
     while(1)
     {
@@ -83,7 +84,7 @@ int main(int argc, char *argv[])
                 for(i=0;  i<strlen(word); i++){
                     if(word[i]==message[0] && question[i] != message[0]){
                         iscorrect++;
-                        question[i]=word[j];
+                        question[i]=word[i];
                         if (iscorrect == strlen(word)) {
                             send(clnt_sock, word, strlen(word), 0);
                             send(clnt_sock, "단어완성!\n", strlen("단어완성!\n"), 0);
@@ -92,9 +93,9 @@ int main(int argc, char *argv[])
                             return 0;
                         }
                     }
-                    else
-                        chance++;
                 }
+                if (iscorrect == last)
+                    chance++;
                 
                 if (chance == 7) {
                     //drawHangman(7);
@@ -107,11 +108,14 @@ int main(int argc, char *argv[])
                     close(serv_sock);
                     return 0;
                 }
+                
                 send(clnt_sock, drawHangman(chance), strlen(drawHangman(chance)), 0);
                 send(clnt_sock, "단어 ", strlen("단어 "), 0);
                 send(clnt_sock, question, strlen(question), 0);
                 send(clnt_sock, " 소문자 알파벳을 입력하세요.\n", strlen(" 소문자 알파벳을 입력하세요.\n"), 0);
                 message[0] = 0;
+                last = iscorrect;
+                
                 
                 
                 //            if(message[idx++] == '\n'){
