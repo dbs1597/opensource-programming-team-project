@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
     struct sockaddr_in serv_addr;
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size;
-    int hint;
+    
     char word[MAXLEN], question[MAXLEN];
     
     char message[MAXLEN];
@@ -47,7 +47,6 @@ int main(int argc, char *argv[])
     
     clnt_addr_size=sizeof(clnt_addr);
     
-    printf("행맨게임에 오신 것을 환영합니다\n");
     printf("정답단어를 입력하세요.\n");
     scanf("%s", word);
     
@@ -65,7 +64,6 @@ int main(int argc, char *argv[])
         clnt_sock=accept(serv_sock, (struct sockaddr*)&clnt_addr,&clnt_addr_size);
         if(clnt_sock==-1)
             error_handling("accept() error");
-        
         puts("Server] Accepted!!");
         
         send(clnt_sock, "행맨게임에 오신 것을 환영합니다.\n", strlen("행맨게임에 오신 것을 환영합니다.\n"), 0);
@@ -73,12 +71,7 @@ int main(int argc, char *argv[])
         
         message[0] = 0;
         idx = 0;
-<<<<<<< HEAD
         while(read(clnt_sock, &message[0], 1) == 1)
-=======
-        
-        while(read_len==read(clnt_sock, &message[idx], 1))
->>>>>>> 941636feec71d9cabee69325938693d690b93490
         {
             
             if(read_len==-1){
@@ -87,23 +80,13 @@ int main(int argc, char *argv[])
             }
             printf("1 %d\n", strlen(message));
             
-            if(strlen(message)==1)
-            {
+            if(strlen(message)==1) {
                 printf("2\n");
-                for(i=0;  i<strlen(word); i++)
-                {
-                    if(word[i]==message[0] && question[i] != message[0])
-                    {
+                for(i=0;  i<strlen(word); i++){
+                    if(word[i]==message[0] && question[i] != message[0]){
                         iscorrect++;
-<<<<<<< HEAD
-                        question[i]=word[j];
-                        
-                        if (iscorrect == strlen(word))
-                        {
-=======
                         question[i]=word[i];
                         if (iscorrect == strlen(word)) {
->>>>>>> 3c98d09b8e2c284f7ec713c005df4b1995a2b0fe
                             send(clnt_sock, word, strlen(word), 0);
                             send(clnt_sock, "단어완성!\n", strlen("단어완성!\n"), 0);
                             close(clnt_sock);
@@ -133,8 +116,6 @@ int main(int argc, char *argv[])
                 send(clnt_sock, " 소문자 알파벳을 입력하세요.\n", strlen(" 소문자 알파벳을 입력하세요.\n"), 0);
                 message[0] = 0;
                 last = iscorrect;
-                message[0] = 0;
-                read = 0;
                 
                 
                 
@@ -149,6 +130,8 @@ int main(int argc, char *argv[])
                 //            }
             }
         }
+        
+        sleep(1);
     }
     
     close(clnt_sock);
