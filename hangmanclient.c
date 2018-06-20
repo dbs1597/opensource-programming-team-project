@@ -55,7 +55,7 @@ void wrt(void * arg) {
     
     int sock = *((int *)arg);
     char input[BUF_SIZE];
-    while(strcmp("quit", input )== 0) {
+    while(strcmp("quit", input ) != 0) {
         fgets(input, BUF_SIZE, stdin);
         write(sock, input, BUF_SIZE);
     }
