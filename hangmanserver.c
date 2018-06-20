@@ -23,7 +23,7 @@ int main(int argc, char *argv[])
     
     char word[MAXLEN], question[MAXLEN];
     
-    char message[MAXLEN]="Hello World!";
+    char message[MAXLEN];
     
     if(argc!=2) {
         printf("Usage : %s <port>\n", argv[0]);
@@ -76,10 +76,12 @@ int main(int argc, char *argv[])
                 error_handling("read() error!");
                 exit(1);
             }
+            printf("1 %d\n", strlen(message));
             
-            if(strlen(read_len)==1) {
+            if(strlen(message)==1) {
+                printf("2\n");
                 for(i=0;  i<strlen(word); i++){
-                    if(word[i]==message[0]){
+                    if(word[i]==message[0] && question[i] != message[0]){
                         iscorrect++;
                         question[i]=word[j];
                         if (iscorrect == strlen(word)) {
@@ -90,13 +92,9 @@ int main(int argc, char *argv[])
                             return 0;
                         }
                     }
-                    //                    else if(question[i]=='*')
-                    //                        iscontinue=1;
-                    //                }
+                    else
+                        chance++;
                 }
-                
-                chance++;
-                last = 7-chance;
                 
                 if (chance == 7) {
                     //drawHangman(7);
@@ -109,13 +107,11 @@ int main(int argc, char *argv[])
                     close(serv_sock);
                     return 0;
                 }
-                else {
-                    send(clnt_sock, drawHangman(7), strlen(drawHangman(7)), 0);
-                    send(clnt_sock, "단어 ", strlen("단어 "), 0);
-                    send(clnt_sock, question, strlen(question), 0);
-                    send(clnt_sock, " 소문자 알파벳을 입력하세요.\n", strlen(" 소문자 알파벳을 입력하세요.\n"), 0);
-                }
-                
+                send(clnt_sock, drawHangman(chance), strlen(drawHangman(chance)), 0);
+                send(clnt_sock, "단어 ", strlen("단어 "), 0);
+                send(clnt_sock, question, strlen(question), 0);
+                send(clnt_sock, " 소문자 알파벳을 입력하세요.\n", strlen(" 소문자 알파벳을 입력하세요.\n"), 0);
+                message[0] = 0;
                 
                 
                 //            if(message[idx++] == '\n'){
@@ -177,3 +173,4 @@ char* drawHangman(int num){
     }
     return hangman;
 }
+
