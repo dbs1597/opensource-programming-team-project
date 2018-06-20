@@ -7,48 +7,56 @@
 #include <sys/socket.h>
 
 #define MAXLEN 1024
+
 void error_handling(char *message);
+char* drawHangman(int num);
 
 int main(int argc, char *argv[])
 {
     int serv_sock;
     int clnt_sock;
     int read_len , idx;
+    int i, j, iscorrect, chance, last;
     struct sockaddr_in serv_addr;
     struct sockaddr_in clnt_addr;
     socklen_t clnt_addr_size;
     
+    char word[MAXLEN], question[MAXLEN];
+    
     char message[MAXLEN]="Hello World!";
-    
-    int usercount = 0;
-    int user[2] = {0}; //user 소켓
-    
-    //socket
-    serv_sock=socket(PF_INET, SOCK_STREAM, IPPROTO_TCP); //양방향통신
-    if(serv_sock == -1)
-        error_handling("socket() error");
     
     if(argc!=2) {
         printf("Usage : %s <port>\n", argv[0]);
         exit(1);
     }
     
+    serv_sock=socket(PF_INET, SOCK_STREAM, 0);
+    if(serv_sock == -1)
+        error_handling("socket() error");
+    
     memset(&serv_addr, 0, sizeof(serv_addr));
     serv_addr.sin_family=AF_INET;
     serv_addr.sin_addr.s_addr=htonl(INADDR_ANY);
     serv_addr.sin_port=htons(atoi(argv[1]));
     
-    //bind
     if(bind(serv_sock, (struct sockaddr*) &serv_addr, sizeof(serv_addr))==-1)
         error_handling("bind() error");
     
-    //listen
     if(listen(serv_sock, 5)==-1)
         error_handling("listen() error");
     
     clnt_addr_size=sizeof(clnt_addr);
     
-    //read
+    printf("정답단어를 입력하세요.\n");
+    scanf("%s", word);
+    
+    for(i=0;  i<strlen(word); i++)
+        question[i]='*';
+    question[i]='\0';
+    
+    iscorrect = 0;
+    chance = 0;
+    
     while(1)
     {
         puts("Server] Listening...");
@@ -57,52 +65,72 @@ int main(int argc, char *argv[])
             error_handling("accept() error");
         puts("Server] Accepted!!");
         
-        usercount++;
-        
-        if(usercount<=2){ // player 2명 받기
-            user[usercount-1]=clnt_sock;
-            
-            send(clnt_sock,"Welcome to HangmanGame!\n",strlen("Welcome to HangmanGame!\n"),0);
-            
-            if(usercount==1){ //player 1
-                send(clnt_sock,"you are player1\n",strlen("you are player1\n"),0);
-                send(clnt_sock,"상대방이 접속하면 게임이 시작됩니다.\n",strlen("상대방이 접속하면 게임이 시작됩니다.\n"),0);
-            }
-            else if(usercount==2){ //player 2
-                send(clnt_sock,"you are player2\n",strlen("you are player2\n"),0);
-                send(clnt_sock,"잠시 후 게임이 시작됩니다.\n",strlen("잠시 후 게임이 시작됩니다.\n"),0);
-            }
-        }
-        else // player 2명 다 차면
-            send(clnt_sock,"정원이 다 찼습니다.\n",strlen("정원이 다 찼습니다.\n"),0);
-        
-        //게임시작
-        send(user[0],"Game Start!\n",strlen("Game Start!\n"),0);
-        send(user[1],"Game Start!\n",strlen("Game Start!\n"),0);
-        
+        send(clnt_sock, "행맨게임에 오신 것을 환영합니다.\n", strlen("행맨게임에 오신 것을 환영합니다.\n"), 0);
+        send(clnt_sock, "소문자 알파벳을 입력하세요.\n", strlen("소문자 알파벳을 입력하세요.\n"), 0);
         
         message[0] = 0;
         idx = 0;
-        while(read_len==read(clnt_sock, &message[idx], 1))
+        while(read_len=read(clnt_sock, &message[idx], 1))
         {
             if(read_len==-1){
                 error_handling("read() error!");
                 exit(1);
             }
             
-            if(message[idx++] == '\n'){
-                message[idx] = 0;
+            if(strlen(read_len)==1) {
+                for(i=0;  i<strlen(word); i++){
+                    if(word[i]==message[0]){
+                        iscorrect++;
+                        question[i]=word[j];
+                        if (iscorrect == strlen(word)) {
+                            send(clnt_sock, word, strlen(word), 0);
+                            send(clnt_sock, "단어완성!\n", strlen("단어완성!\n"), 0);
+                            close(clnt_sock);
+                            close(serv_sock);
+                            return 0;
+                        }
+                    }
+                    //                    else if(question[i]=='*')
+                    //                        iscontinue=1;
+                    //                }
+                }
                 
-                //-----------------------write code to do---------------------------------
-                printf("Message from Client: %s", message);
-                //------------------------------------------------------------------------
-                message[0] = 0 ;
-                idx = 0;
+                chance++;
+                last = 7-chance;
+                
+                if (chance == 7) {
+                    //drawHangman(7);
+                    send(clnt_sock, drawHangman(7), strlen(drawHangman(7)), 0);
+                    send(clnt_sock, "행맨이 죽었습니다ㅜ\n", strlen("행맨이 죽었습니다ㅜ\n"), 0);
+                    send(clnt_sock, "정답은 ", strlen("정답은 "), 0);
+                    send(clnt_sock, word, strlen(word), 0);
+                    send(clnt_sock, "입니다\n", strlen("입니다\n"), 0);
+                    close(clnt_sock);
+                    close(serv_sock);
+                    return 0;
+                }
+                else {
+                    send(clnt_sock, drawHangman(7), strlen(drawHangman(7)), 0);
+                    send(clnt_sock, "단어 ", strlen("단어 "), 0);
+                    send(clnt_sock, question, strlen(question), 0);
+                    send(clnt_sock, " 소문자 알파벳을 입력하세요.\n", strlen(" 소문자 알파벳을 입력하세요.\n"), 0);
+                }
+                
+                
+                
+                //            if(message[idx++] == '\n'){
+                //                message[idx] = 0;
+                //
+                //                //-----------------------write code to do---------------------------------
+                //                printf("Message from Client: %s", message);
+                //                //------------------------------------------------------------------------
+                //                message[0] = 0 ;
+                //                idx = 0;
+                //            }
             }
         }
     }
     
-    //close
     close(clnt_sock);
     close(serv_sock);
     return 0;
@@ -110,7 +138,42 @@ int main(int argc, char *argv[])
 
 void error_handling(char *message)
 {
-    perror(message);
+    fputs(message, stderr);
     fputc('\n', stderr);
     exit(1);
+}
+
+char* drawHangman(int num){
+    char* hangman={ 0 };
+    switch (num)
+    {
+        case 0:
+            hangman = "┌───┐\n│\n│\n│\n│\n└──────\n";
+            break;
+        case 1:
+            hangman = "┌───┐\n│　○\n│\n│\n│\n└──────\n";
+            break;
+        case 2:
+            hangman = "┌───┐\n│　○\n│　 |\n│\n│\n└──────\n";
+            break;
+        case 3:
+            hangman = "┌───┐\n│　○\n│　/|\n│\n│\n└──────\n";
+            break;
+        case 4:
+            hangman = "┌───┐\n│　○\n│　/|＼\n│　\n│\n└──────\n";
+            break;
+        case 5:
+            hangman = "┌───┐\n│　○\n│　/|＼\n│　/\n│\n└──────\n";
+            break;
+        case 6:
+            hangman = "┌───┐\n│　○\n│　/|＼\n│　/＼\n│\n└──────\n";
+            break;
+        case 7:
+            hangman = "┌───┐\n│　○\n│　 X\n│　/|＼\n│　/＼\n└──────\n";
+            break;
+        default:
+            hangman = "drawing error\n";
+            break;
+    }
+    return hangman;
 }
