@@ -10,6 +10,7 @@
 
 void error_handling(char *message);
 void wrt(void * arg);
+void rcv(void * arg);
 
 int main(int argc, char* argv[])
 {
@@ -90,3 +91,36 @@ void error_handling(char *message)
     fputc('\n', stderr);
     exit(1);
 }
+<<<<<<< HEAD
+=======
+
+void wrt(void * arg) {
+    
+    int sock = *((int *)arg);
+    char input[BUF_SIZE];
+    while(strcmp("quit", input ) != 0) {
+        fgets(input, BUF_SIZE, stdin);
+        write(sock, input, BUF_SIZE);
+    }
+}
+
+void rcv(void * arg) {
+    int sock = *((int*)arg);
+    int rcv_cnt;
+    char input[BUF_SIZE];
+    
+    while(1) {
+        rcv_cnt = read(sock, &input, BUF_SIZE-1);
+        if(rcv_cnt == -1) {
+            error_handling("read() error!");
+        }
+        
+        input[rcv_cnt-1] = 0;
+        if(strcmp(input, "fail") == 0) {
+            error_handling("error!");
+        }
+        
+        write(sock, input, rcv_cnt);
+    }
+}
+>>>>>>> 6dcc098c4f9ff1c88f2bc32afffd0b33f7a2c069
