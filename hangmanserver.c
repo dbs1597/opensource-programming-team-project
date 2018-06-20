@@ -74,7 +74,7 @@ int main(int argc, char *argv[])
         message[0] = 0;
         idx = 0;
         
-        while(read_len=read(clnt_sock, &message[idx], 1))
+        while(read_len==read(clnt_sock, &message[idx], 1))
         {
             if(read_len==-1){
                 error_handling("read() error!");
