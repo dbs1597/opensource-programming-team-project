@@ -71,8 +71,9 @@ int main(int argc, char *argv[])
         
         message[0] = 0;
         idx = 0;
-        while(read_len=read(clnt_sock, &message[idx], 1))
+        while(read(clnt_sock, &message[0], 1) == 1)
         {
+            
             if(read_len==-1){
                 error_handling("read() error!");
                 exit(1);
@@ -115,6 +116,8 @@ int main(int argc, char *argv[])
                 send(clnt_sock, " 소문자 알파벳을 입력하세요.\n", strlen(" 소문자 알파벳을 입력하세요.\n"), 0);
                 message[0] = 0;
                 last = iscorrect;
+                message[0] = 0;
+                read = 0;
                 
                 
                 
